@@ -134,6 +134,7 @@ library(ggplot2)
 
 
 **mean = 2, variance = 4**
+
 ```{r, echo=FALSE}
 df <- data.frame(x = rnorm(1000, 2, 2))
 
@@ -148,7 +149,10 @@ ggplot(df, aes(x)) +
   ) + xlim(-10,15) 
 
 ```
+
+
 **mean = 2, variance = 25**
+
 ```{r, echo=FALSE}
 df <- data.frame(x = rnorm(1000, 2, 5))
 
