@@ -1,0 +1,446 @@
+---
+title: "Discussion4-Solution: Stat 371"
+author: "Henry Mendoza Rivera, UW-Madison, Department of Statistics."
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo =TRUE)
+```
+
+A hospital has three emergency generators for use in case of a power failure. Each generator operates independently, and the manufacturer claims that the probability each generator will function properly during a power failure is 0.95. Let X be the number of emergency generators that `fail` during the next power outage.
+
+
+A. Determine the probability distribution of X.
+
+Since X= the `number of failures`. Then  `P(failure)=0.05` for each trial.
+
+<center>
+| X | P(X=x) |
+|:-:|:-:|
+| 0 | $\binom{3}{0}(0.05)^0\times(0.95)^3=0.857375$ |
+| 1 | $\binom{3}{1}(0.05)^1\times(0.95)^2=0.135375$ |
+| 2 | $\binom{3}{2}(0.05)^2\times(0.95)^1=0.007125$ |
+| 3 | $\binom{3}{3}(0.05)^3\times(0.95)^0=0.000125$ |
+
+</center>
+
+B. Create in R, the probability distribution with a bar chart of the Random variable X. Add a single red point to display the position of the mean $\mu_X$. 
+
+`Solution:`
+```{r,fig.align='center'}
+x<-c(0,1,2,3)
+
+p.x<-dbinom(x,3,0.05)
+data.frame(x,p.x)
+mean.x<-sum(x*p.x)
+
+plot(x=x, y=p.x, type="h",lwd=7,col="blue")
+points(x=mean.x,y=0,pch=16, col="red")
+```
+
+C. Interpret the graph of the probability distribution.
+
+`Solution:`
+
+This is a skewed right probability distribution where small values are highly likely to occur. We observe that there is a high probability, around 0.85, that none of the emergency generators  `fail` during the next power outage. However, there is some significant probability around 0.15  that at least one of the emergency generators `fail` during the next power outage.
+
+ D. Use the following applet and generate the probability distribution of the random variable X.  Take a screenshot and insert the image below.
+ 
+ [https://shiny.rit.albany.edu/stat/binomial/](https://shiny.rit.albany.edu/stat/binomial/)
+
+
+`To insert an image in your RMarkdown document:`
+
+1. Save your screenshot with the name binomial.png in your folder Graphs inside your Stat 371 folder.   
+
+2. Outside a code chunk, write:
+
+`![](Graphs/binomial.png)`
+
+![insert image](Graphics/bin1.png)
+
+3. Knit your document.
+
+```{r}
+mean.x<-sum(x*p.x)
+
+plot(x=x, y=p.x, type="h",lwd=7,col="blue")
+points(x=mean.x,y=0,pch=16, col="red")
+```
+
+
+
+E. Suppose that you buy this hospital. What will your decision about three emergency generators, if you found in a document related with the tree generators that `P(failure)=0.95`. (Remember here success=fail)
+[https://shiny.rit.albany.edu/stat/binomial/](https://shiny.rit.albany.edu/stat/binomial/)
+
+`Solution`
+
+I would immediately change  the three emergency generators.
+
+F. Using the applet, create and interpret the graph of the probability distribution of X with `P(failure)=0.95`. 
+
+`Solution`
+
+This is a skewed left probability distribution where large values are highly likely to occur. We observe that there is a high probability, around 0.95, that the three  emergency generators  `fail` during the next power outage. 
+
+G. Using R, create the table with the probability distribution and the graph of the variable X with `P(failure)=0.95`. 
+
+
+`Solution:`
+
+```{r,fig.align='center'}
+x<-c(0,1,2,3)
+
+p.x<-dbinom(x,3,0.95)
+
+data.frame(x,p.x)
+
+mean.x<-sum(x*p.x)
+
+plot(x=x, y=p.x, type="h",lwd=7,col="blue")
+points(x=mean.x,y=0,pch=16, col="red")
+```
+
+
+H. Create and interpret the graph of the probability distribution of X with `P(failure)=0.50`. Is it reasonable this type of distribution for this situation?
+
+`Solution`
+
+It is not reasonable since we want that the three emergency generators never fail with high probability, or at least the chance to occur this event be small. We want a skewed right distribution with a probability of taking a zero value be close to one. 
+
+I. Suppose a power failure occurs and all three generators fail (assume `P(failure)=0.05`) . Do you have reason to doubt the manufacturer's claim?
+
+`Solution`
+
+There is only a probability of $P(X=3)=0.000125$ that all three generators would fail, assuming that failure of each one is $0.05$. Since this has such a low probability of occurring, it makes us question our original assumptions of independence and/or failure probability of 0.05 for each.
+
+
+J. Calculate the expected value of X, $\mu_X$ and interpret it in context.
+
+`Solution`
+
+You  can calculate it using the binomial shortcut: $3*.05=0.15$ or using the original RV calculation:$0*0.857375+1*0.135375+2*0.007125+3*0.000125=0.15$ This is the average number of generators out of three that will fail during a large number of power outages.
+
+
+
+# Problem 2.
+
+Weights (X) of male cats of a certain breed (A) are well approximated by a normal distribution with mean 4.1 kg and standard deviation of 0.6 kg. That is,  $X~\sim N(4.1, 0.6^2)$.
+
+```{r}
+library(ggplot2)
+```
+
+
+**mean = 2, variance = 4**
+
+```{r, echo=FALSE}
+df <- data.frame(x = rnorm(1000, 2, 2))
+
+# overlay histogram and normal density
+ggplot(df, aes(x)) +
+  #geom_histogram(aes(y = stat(density))) +
+  stat_function(
+    fun = dnorm, 
+    args = list(mean = mean(df$x), sd = sd(df$x)), 
+    lwd = 2, 
+    col = 'red'
+  ) + xlim(-10,15) 
+
+```
+
+
+**mean = 2, variance = 25**
+
+```{r, echo=FALSE}
+df <- data.frame(x = rnorm(1000, 2, 5))
+
+# overlay histogram and normal density
+ggplot(df, aes(x)) +
+  #geom_histogram(aes(y = stat(density))) +
+  stat_function(
+    fun = dnorm, 
+    args = list(mean = mean(df$x), sd = sd(df$x)), 
+    lwd = 2, 
+    col = 'red'
+  ) + xlim(-10,15) + ylim(0,0.2) 
+```
+
+
+A. What proportion of male cats of that breed (A) have weights between 3.7 and 4.4 kg?
+
+```{r, echo=FALSE}
+library(ggplot2)
+x <- seq(0, 8, length=1000)
+y <- dnorm(x, mean=4.1, sd=0.6)
+df = data.frame(x=x,y=y)
+ggplot(df,aes(x = x,y = y)) +geom_line() +
+          geom_vline(xintercept = 4.1)  +
+      geom_area(data = df[df$x<=4.4,], aes(x=x, y=y), fill="skyblue")
+
+```
+
+
+```{r, echo=FALSE}
+x <- seq(0, 8, length=1000)
+y <- dnorm(x, mean=4.1, sd=0.6)
+df = data.frame(x=x,y=y)
+ggplot(df,aes(x = x,y = y)) +geom_line() +
+          geom_vline(xintercept = 4.1)  +
+      geom_area(data = df[df$x<=4.4,], aes(x=x, y=y), fill="skyblue") + 
+      geom_area(data = df[df$x<=3.1,], aes(x=x, y=y), fill="tomato2") 
+```
+
+`Solution:`
+
+
+```{r}
+#P(3.7<X<4.4)=
+(pnorm(q=4.4, mean=4.1, sd=.6)-pnorm(q=3.7, mean=4.1, sd=.6))
+?pnorm
+```
+
+
+B. A male cat of that breed (A) has a weight that is 0.5 standard deviations above the mean. What percentage of male cats of that breed (A) are heavier than this one?
+
+
+`Solution:`
+
+
+
+```{r}
+(x=4.1+0.5*(0.6))
+
+1-pnorm(q=x,mean=4.1, sd=.6)
+```
+
++ The $30.9\%$ of male cats of that breed (A) are heavier that this male cat.
+
+
+C. How heavy is a male cat of that breed (A) whose weight is at the 80th percentile?
+
+`Solution:`
+
+```{r}
+(qnorm(p=.8, mean=4.1, sd=.6))
+```
+
+The male cat weight 4.604973
+
+
+
+
+D. `Ten` male cats are chosen at random from that breed (A) (assume there are many of these types of cats). What is the probability that `exactly 2` of them weigh more than 4.5 kg? 
+
++ Assume that the weights of the 10 cats are independent since the population is very large. (Sampling such a small number of cats without replacement will not functionally change the probability of the outcome of subsequent cats.)
+
+`Hint:` consider the variable X of interest. An set the value of the parameters.
+
+`Solution:`
+
++ Let X= weight of the male cats. $X~\sim N(mean=4.1,sd=.6)$.
++ p=P(X>4.5)
+
+```{r}
+(p=1-pnorm(q=4.5,mean=4.1,sd=0.6))
+```
+
++ Le Y= number of males cats that weigh more than 4.5. $Y~\sim Binomial(n=10,p=P(X>4.5))$. That is, $Y~\sim Binomial(n=10,p=0.2524925)$.
+
+
++  Compute the probability
+```{r}
+dbinom(x=2,size=10,p=p)
+```
+
+
+
+E. Ten male cats are chosen at random from that breed (A) (assume there are many of these types of cats). What is the probability that `the average weight` is between 3.7 and 4.4 kg?
+
+`Solution:`
+
+
++ We need to consider the distribution of the average weight $\bar{X}$. It has a Normal distribution since it is the linear combination of normal random variables.
+
++ $E(\bar{X})=E(\frac{X_1+X_2+...+X_{10}}{10})=\frac{10*E(X)}{10}=E(X)=\mu$ 
+
+and 
+
+
++ $\sigma^2_{\bar{X}}=Var(\frac{X_1+X_2+...+X_{10}}{10})=\frac{Var(X_1+X_2+...+X_{10})}{10^2}=\frac{10*Var(X)}{10^2}=\frac{Var(X)}{10}=\frac{.6^2}{10}$ $\sim N(4.1,\frac{.6^2}{10})$ so $P(3.7<\bar{X}<4.4)$ is 
+
+```{r}
+pnorm(4.4, 4.1, .6/sqrt(10))-pnorm(3.7, 4.1, .6/sqrt(10))
+```
+
+F. The weight of male cats from a different `species (B)` is also normally distributed but we have those weights in pounds (lbs): $Y\sim N(8.65, 1.4^2)$. 
+
++ 1kg $\approx$ 2.205 lbs, or 1 lb $\approx$ 0.454 kg.
+
+
+
+Compare the weights of the male cats from the two breeds. That is, Male cats from which breed (A) or (B) are heavier[lighter] on average? Which have more[less] variable weight?
+
+`Hint:` In order to compare both breeds, consider the variable Z be the weight of `A cats` in lbs. The compute the expected value and the variance.
+
+`Solution:`
+
++ Let Z be the weight of A cats in lbs.
+
++ $Z=2.205*X$, $E(Z)=2.205*E(X)=2.205*4.1=9.0405$ lbs
+
++ and $Var(Z)=Var(2.205*X)=2.205^2*Var(X)=2.205^2*.6^2$
+
++ so $SD(Z)=2.205\times0.6=1.323\;\textrm{lbs}$.
+
+
++ Comparing weights in the units of lbs:
+
+B:$Y~N(8.65, 1.4^2)$ A: $P~N(9.04,1.32^2)$. So the A breed is heavier on average and has a lower variability of weight. 
+
+
+# Problem 3
+
+A. Using the dataset lbw and the variable low. Check if the conditions for a binomial random process are satisfied in the sample. Based on your findings, Do you think that it is reasonable to model this data  with a Binomial probabilistic model?.
+
+`Solution`
+
++ Read the lbw data set.
+
+```{r}
+lbw<-read.csv2("lbw.csv",sep=",", dec = ".")
+lbw$low<-as.factor(lbw$low)
+lbw$smoke<-as.factor(lbw$smoke)
+lbw$race<-as.factor(lbw$race)
+lbw$ht<-as.factor(lbw$ht)
+lbw$ui<-as.factor(lbw$ui)
+```
+
++ Check the conditions for a binomial random process
+
+1. The random process consists of selecting $n=189$ babies  and observe if the baby has  low or normal weigh.
+
+2. Each observation of the baby's weigh results in one of two possible outcomes:
+
+    - `success`= Low weigh (1)
+    - `failure`= normal weigh (0).
+
+3. The empirical probability of success on any single trial is the same for every trial, and we can estimate it by $59/189$ or `r 59/189`.
+
+4. The observations are `independent` meaning that the outcome of any baby doesn’t affect the probabilities  of the outcome in another baby.
+
+5. The variable associated with the random process count the number of babies with low weigh in a fixed sample of size n=189. X theoretically can take values: $0,1,2,\ldots,189$. Here we have only one possible observation of X, x=59.
+
+```{r}
+summary(lbw$low)
+```
+
+
+
++ `Conclusion:` From the above checking,  we can think that it is reasonable to model this data  with a Binomial probabilistic model.
+
+
+B. Using the dataset lbw and the variable bwt. Check the characteristics of random normal variable in the sample.  Based on your findings, Do you think that it is reasonable to model this data  with a Normal probabilistic model?.
+
+
+`Solution`
+
++ Check some characteristic of a Normal random variable
+
+1. The histogram of the data is symmetric
+
+```{r,fig.align='center'}
+hist(lbw$bwt,col="deepskyblue4",xlab = "Birth Weight (pounds)")
+```
+
+The histogram of the sample data is approximately symmetric.
+
+2. The mean, mode, and median are equal
+
+Use the summary function to find the mean and median.
+
+```{r}
+summary(lbw$bwt)
+
+```
+
+Using the function `table()` and observing the frequency of the values. We found that there are 4 modes: 2495  2920  2977  3651 
+
+
+```{r}
+table(lbw$bwt)
+
+```
+
+The mean, median, and mode are "close" each other:
+
+        - Mode: 2495,  2920,  2977,  3651 
+        - Mean: 2944
+        - Median: 2977 
+
+
+4. The interquartile range is 4/3 of the standard deviation.
+
+
+```{r}
+IQR(lbw$bwt)
+```
+
+```{r}
+4/3*sd(lbw$bwt)
+```
+
+The interquartile range,1061, is "close" to 4/3 of the standard deviation, 972.0214.
+
+
+5. Th kurtosis is zero
+
+```{r}
+x = lbw$bwt
+m = mean(x)
+s = sd(x)
+n  = length(x)
+
+kurt = sum((x-m)^4/s^4)/n-3
+kurt
+```
+
+The kurtosis is a "close" to zero.
+
+6. The skewness is zero.
+
+```{r}
+x = lbw$bwt
+m = mean(x)
+s = sd(x)
+n  = length(x)
+skew = sum((x-m)^3/s^3)/n
+skew
+```
+The skewness is "close" to zero.
+
+
+7. The qqplot fit a straight line
+
+
+
+```{r,fig.align="center"}
+
+qqnorm(lbw$bwt,col="blue")
+qqline(lbw$bwt,col="red")
+```
+
+We observe that the qqplot fit well to a straight line
+
+
++ `Conclusion:` From the above graphical representations and the numerical summaries, we can think that it is reasonable to model this data  with a Normal probabilistic model, but we need to add some methods for hypothesis testing about normality such as Anderson-Darling, Kolmogorov-Smirnov, and others. We will study some of these method in the Inferential part of the course.
+
+
++ `Article:` Read the section `statistical analysis` of the article: "Distribution and Determinants of Low Birth Weight in Developing Countries." See link below.
+
+[](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5327679/)
+
+        + The authors state: "Normality test for the birth weight data was accomplished through graphically"
+
+        + Do you think that there is something  missing?

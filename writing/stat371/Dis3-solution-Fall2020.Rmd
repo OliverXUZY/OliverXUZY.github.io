@@ -1,0 +1,305 @@
+---
+title: "STAT 371: Discussion 3: Probability"
+author: "Henry Mendoza Rivera, UW-Madison, Department of Statistics"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+
+# Question 1
+
+A geneticist is studying two genes. Each gene can be either dominant or recessive. A sample of 100 individuals is categorized and found to have 56 individuals with both genes dominant, 6 individuals with both genes recessive and a total of 70 total Gene 2 dominant individuals.
+
+
+A. Create a contingency table  (2-way table)  to show the frequency (the counts of individuals) within each of the 4 combinations of dominant and recessive for the two genes. The table should look like below table without totals.
+
+
+
+<center>
+| | Gene 2 Dominant | Gene 2 Recessive | Total |
+|:-:|:-:|:-:|:-:|
+| Gene 1 Dominant | 56 | | |
+| Gene 1 Recessive |  |  |  |
+| Total |  |  | 100 |
+
+</center>
+
+
+
+**Solution**
+
+
+```{r,echo=FALSE}
+# contingency table with frequencies
+
+mytable <- matrix(c(56,24,14,6), nrow = 2, ncol = 2, byrow = TRUE)
+rownames(mytable)<-c("Gene 1 Dominant","Gene 1 Recessive")
+colnames(mytable)<-c("Gene 2 Dominant","Gene 2 Recessive")
+mytable
+```
+
+
+
+B. Create a matrix in R to show the frequency contingency table (2-way table) obtained in question 1-A. Present the R code and the output.  
+
+
+
+**Solution**
+
+
+
+
+```{r}
+# contingency table with frequencies
+
+mytable <- matrix(c(56,24,14,6), nrow = 2, ncol = 2, byrow = TRUE)
+rownames(mytable)<-c("Gene 1 Dominant","Gene 1 Recessive")
+colnames(mytable)<-c("Gene 2 Dominant","Gene 2 Recessive")
+mytable
+```
+
+
+
+
+C. What is the probability that a randomly sampled individual from this group has Gene 1 dominant?. Hint: use the table obtained in 1-A (or 1B).
+
+
+
+**Solution**
+
+80/100 = 0.8
+
+
+D. Using the R code obtained in 1-A, modify it to present a contingency table with probabilities with `respect to the total`. Present the R code and the output.  
+
+
+```{r}
+mytable.prop <- prop.table(mytable)
+p<-round(mytable.prop,3)
+p
+
+```
+
+
+Note
+
+    Observe that we can answer the question in 1-C by using this table.
+
+
+
+
+E. What is the probability that a randomly sampled individual from this group has Gene 2 dominant,
+given we know they have Gene 1 dominant?. Hint: use the table obtained in 1-A (or 1B) or 1D.
+
+
+
+**Solution**
+
+$$P(\textrm{Gene 2 Dom | Gene 1 Dom})=\frac{56}{80}= 0.7$$
+
+
+
+F. The genes are said to be in linkage equilibrium if the event Gene 1 is independent
+of the event Gene 2 in population. Based on this sample, Can we also guess independence between Gene1 and Gene 2 in population or a linkage equilibrium  in the population?
+
+
+
+
+Hint:
+
+    1. use the table obtained in 1-A (or 1B) and the definition of independence of two events. 
+    2. apply the definition for each of the 4 combinations of dominant and recessive for the two genes
+    3. Observe that we can compute the probabilities using the table in 1-D.
+
+
+
+\begin{comment}
+F. The genes are said to be in linkage equilibrium if the event that Gene 1 is dominant is independent
+of the event that Gene 2 is dominant. Are these genes in linkage equilibrium in this group?. Hint: use the
+table obtained in 1-A (or 1B) and the definition of independence of two events.
+\end{comment}
+
+\begin{comment}
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5124487/
+
+https://youtu.be/9FquiL7qDmw?t=110
+
+\end{comment}
+
+
+
+
+lets check one case (present the other cases): 
+
+$$P(\textrm{Gene 2 Dominant | Gene 1 Dominant})=\frac{56}{80} = 0.7= P(\textrm{Gene 2 Dominant})=\frac{70}{100} = 0.7$$
+so yes, the genes are in linkage equilibrium in this group of 100 individuals.
+
+
+or
+
+$$P(\textrm{Gene 2 Dominant}\;\cap\; \textrm{Gene 1 Dominant})=P(\textrm{Gene 2 Dominant})*P(\textrm{Gene 1 Dominant})$$
+
+
+$P(\textrm{Gene 2 Dominant}\;\cap\; \textrm{Gene 1 Dominant})= 0.56$
+
+
+$P(\textrm{Gene 2 Dominant})*P(\textrm{Gene 1 Dominant})=0.70*0.80$
+
+
+
++ (Optional) For additional information related with this question go to: [https://youtu.be/9FquiL7qDmw?t=110](https://youtu.be/9FquiL7qDmw?t=110)
+
+
+
+**Solution**
+
+```{r}
+# Gene 1 Dominant and Gene 1 Dominant
+#0.56= 0.80*0.7
+
+0.80*0.7
+
+# Gene 1 Recessive and Gene 2 Dominant
+#0.14= 0.20* 0.70
+
+0.20* 0.70
+
+# Gene 1 Dominant and Gene 2 Recessive
+# 0.24=0.80*0.30
+
+0.80*0.30
+
+# Gene 1 Recessive and Gene 2 Recessive
+# 0.06=0.30*0.20
+
+0.30*0.20
+
+```
+
++ Based on this sample, we would guess also that there is independence between Gene1 and Gene 2 in population or a linkage equilibrium in the population.
+
+
+Note: 
+
+    We will actually see when we get into `hypothesis testing` that *even if the sample isn't in perfect* linkage equilibrium, we may still think they are in the population. 
+
+
+
+
+G. Create a side-by-side conditional probability bar chart  to display the evidence of your findings  in question F. Present the R code and the output.  
+
+
+Hint:
+
+
+    1. Create a table with the conditional probabilities of  Type of Gene 2 (Gene 2 Dominant, Gen 2 Recessive)
+       by Type of Gene 1 (Gene 1 Dominant,Gene 1 Recessive).  
+    2. Use this table to create the Side-By-Side Bar Chart (or grouped bar plot or clustered bar chart)
+        with the table with conditional probabilities.
+    3. Check if the pattern of the distribution of the Type of Gene 2 (Gene 2 Dominant, Gen 2 Recessive) 
+        is the same for each Type of Gene 1 (Gene 1 Dominant,Gene 1 Recessive). If it is true then we can
+        guess that there is independence between Gene1 and Gene 2 in population or a linkage equilibrium
+        in the population.
+
+   
+
+**Solution**
+
++ Table with the conditional probabilities
+
+```{r,fig.align='center'}
+mytable.prop <- prop.table(mytable,1)
+mytable.prop
+p<-round(mytable.prop,3)
+p
+```
+
++  side-by-side conditional probability bar chart
+
+
+```{r,fig.align='center'}
+barplot(t(mytable.prop), ylab="Probability", xlab="Gene 1", main="Gene 2 by Gene 1", col=c("turquoise4", "turquoise2" ), beside=TRUE, width=.3, legend.text = TRUE, 
+        args.legend = list(x = "topright", bty = "n", inset=c(-0.08, 0)))
+
+```
+
+
+    The pattern of the conditional distribution of the Type of Gene 2 (Gene 2 Dominant, Gen 2 Recessive)  **look the same** for each Type of Gene 1 (Gene 1 Dominant,Gene 1 Recessive). We can guess that there is independence between Gene1 and Gene 2 in population or a linkage equilibrium in the population.
+
+
+
+
+
+## Question 2
+
+You are adding Badger-themed bedazzle to your stripped overalls and are using both red and white beads. You are interested in how the size of the bag of beads you purchase to select your beads from changes the probability of different samples of beads.
+Consider taking a sample of size 3, where each bead is selected without replacement of previous beads, from each of two populations:
+
+    1. Small population where the bag contains 7 White (W) beads and 3 Red (R) beads.
+
+    2. Large population where the bag contains 7000 W and 3000 R.
+
+
+Compare with a sample of size 3 generated from a spinner having probability of 0.7 W and 0.3 R.
+
+A. Write out the set of possible samples of size three (3) and calculate the probability of each outcome under the three scenarios.
+
+Example - Outcome: RRR
+
+<center>
+
+| Type             | Probability                                                               |
+|:----------------:|:-------------------------------------------------------------------------:|
+| Small Population | $\frac{3}{10}*\frac{2}{9}*\frac{1}{8}=\frac{6}{720} \approx 0.008$        |
+| Large Population | $\frac{3000}{10000}*\frac{2999}{9999}*\frac{2998}{9998} \approx .3*.3*.3$ |
+| Spinner          | $.3*.3*.3=0.027$                                                          |
+                                                                                                                                
+</center>
+
+
+
+
+**Solution**
+
+
+<center>
+![](W2-L1-dicus-p2.png)
+</center>
+
+
+
+B. Let A=[Exactly one White]. Calculate the probability of A for each case.
+
+
+
+
+**Solution**
+
+
+A=[WRR, RRW, or RWR], so  
+for small sample: $P(A)=3*42/720=0.175$  
+for large sample and spinner: $P(A)=3*.3^2*.7=0.189$
+
+
+
+C. Let B=[At least one White]. Calculate the probability of B for each case.
+
+
+
+**Solution**
+
+B is complicated, so work with $B^c$ instead: $B^c=[RRR]$, so  
+$P(B)=1-6/720=0.9916667$ for small sample  
+$P(B)=1-.3^3=0.973$ for large sample and spinner
+
+
+
+## Note
+
+Notice, that the spinner model is equivalent to sampling with replacement from either of the two finite populations. The spinner model is a classical representation of a device with no memory, so that the outcome of the current trial is independent of all previous trials. When drawing from a population that is large relative to the sample size, the calculated conditional probability for the second and third beads is very similar to the  probability of each outcome calculated from the spinner (an independent model). So, as long as our population is large relative to our sample, the events are independent "enough" that sampling without replacement does not change the probability of an event.
+
