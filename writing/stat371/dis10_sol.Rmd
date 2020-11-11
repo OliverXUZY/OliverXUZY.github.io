@@ -1,0 +1,273 @@
+---
+title: "dis10"
+author: "Zhuoyan Xu"
+date: "11/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question1
+
+**Consider the low birth weight data set in lbw.csv. The researcher want to know if there is a difference in proportion of babies that are classified as low birth weight (lbw) in the populations of babies with mothers who smoked during pregnancy and mothers who did not smoke. Test the hypothesis at α=0.10
+ significance level.**
+ 
+Let $\pi_{sl}$ be the proportion of babies that are classified as low birth weight (lbw) in the populations of babies with mothers who smoked during pregnancy and $\pi_{nsl}$ be the proportion of babies that are classified as low birth weight (lbw) in the populations of babies with mothers who did not smoke during pregnancy.
+
+#### Step1: State hypothesis:
+
+**H0:**
+
+**H1:**
+
+#### Step2: Compute values below for further testing:
+$n_{ns}$: number of non-smoke observations.
+
+$n_s$: number of smoke observations.
+
+$n_{nsl}$: number of non-smoke observations with low birth weight.
+
+$n_{sl}$: number of smoke observations with low birth weight.
+
+$p_{sl}$: estimated proportion of observations that are classified as **low** birth weight among smoke observations (estimation of $\pi_{sl}$).
+
+$p_{nsl}$: estimated proportion of observations that are classified as **low** birth weight among non-smoke observations (estimation of $\pi_{nsl}$).
+
+$p_{l}$: estimated proportion of observations that are classified as **low** birth weight among whole sample.
+
+```{r}
+## read data
+data = read.csv("Data/lbw.csv")
+```
+
+
+```{r}
+## aggregate info of variables low and smoke  ------- method 1
+data.s = subset(data, smoke == 1)
+data.ns = subset(data, smoke == 0)
+n_sl = nrow(subset(data.s, low == 1))
+n_nsl = nrow(subset(data.ns, low == 1))
+n_s = nrow(data.s)
+n_ns = nrow(data.ns)
+
+
+
+## aggregate info of variables low and smoke  ----- method 2
+n_sl = sum(data$smoke == 1 & data$low == 1)
+n_nsl = sum(data$smoke == 0 & data$low == 1)
+n_s = sum(data$smoke == 1)
+n_ns = sum(data$smoke == 0)
+
+
+#  ------------------
+p_sl = n_sl/n_s 
+p_nsl = n_nsl/n_ns
+p_l = (n_sl + n_nsl)/nrow(data)
+
+paste("n_sl = ",n_sl, "; n_nsl = ",n_nsl, "; n_s = ",n_s, "; n_ns = ",n_ns, "; p_sl = ",p_sl, "; p_nsl = ",p_nsl)
+```
+
+```{r}
+## aggregate info of variables low and smoke  ----- method 3
+t1 = table(data$low,data$smoke,dnn=c("Low","Smoke"))
+t1
+```
+
+```{r}
+prop.table(t1,margin = 2)
+```
+
+#### Step3: Check CLT conditions and construct test
+
+check conditions:
+$$
+n_{ns} * \pi_{l}>5 \\
+n_{ns} * (1 - \pi_{l})>5 \\
+n_{s} * \pi_{l}>5 \\
+n_{s} * (1 - \pi_{l})>5
+$$
+
+```{r}
+## check conditions:
+min(n_s * p_l, n_s * (1-p_l), n_ns * p_l, n_ns * (1-p_l))
+```
+
+
+
+##### Use Central Limit Theorem and construct test stat
+$$
+Z=\frac{P_{sl}-P_{ns l}-0}{\sqrt{P_{l}\left(1-P_{l}\right)\left(\frac{1}{n_{s}}+\frac{1}{n_{ns}}\right)}} \overset{H_0}{\sim} N(0,1)
+$$
+
+```{r}
+## compute observed stat:
+z_stat = (p_sl - p_nsl)/sqrt(p_l*(1-p_l)*(1/n_s + 1/n_ns))
+
+alpha = 0.1
+```
+
+##### method 1: reject region
+```{r}
+## compute quantile:
+z_lower = qnorm(0.05)
+z_upper = qnorm(0.95)
+
+## the code below check whether observed z_stat falls in the reject region
+z_stat > z_upper | z_stat < z_lower
+```
+
+##### method 2: p-value
+$$
+pv = 2\times  \min \{P(Z > z_{stat}),  P(Z< z_{stat})\}
+$$
+
+
+```{r}
+## compute p-value
+min(pnorm(z_stat), pnorm(z_stat,lower.tail = FALSE))*2
+```
+
+
+##### method3: off-the-shelf function prop.test()
+```{r}
+prop.test(x = c(30,29), n = c(n_s, n_ns), conf.level = 0.90, correct = FALSE)
+```
+
+
+## Question2
+
+**A three-month course in marketing advertises that it increase sales for the average participant. A pharmaceutical company wants to get some statistical evidence that the program is effective before sending all of its sales people, so they start by sending only 17. The sales, before and after the course in Marketing (in Thousands of Dollars) is given in the table below.**
+
+```{r}
+Before<-c(3, 8, 7, 10, 6, 7, 12, 7, 6, 8, 9, 7, 10, 7, 4, 5, 7)
+After<-c(7, 12, 14, 8, 5, 7, 8, 6, 13, 9, 6, 8, 10, 10, 11, 12, 12)
+Diff = After - Before
+```
+
+#### State hypothesis:
+
+**Claim: “The three-month course in marketing increase sales for the average participant”**
+
+$\mu_B$: The mean sales before the three-month course in marketing.
+
+$\mu_A$: The mean sales after the three-month course in marketing.
+
+$\mu_D = \mu_A - \mu_B$: The sales difference between after and before the three-month course in marketing.
+ 
+**H0:**
+
+**H1:**
+
+#### A. Perform the relevant t test to test the claim. Use $\alpha$=0.05.
+
+##### Step1: Describe data
+```{r}
+## use hist(); qqnorm(); qqline():
+hist(Diff)
+qqnorm(Diff)
+qqline(Diff)
+```
+##### Step2: Construct test stat
+```{r}
+## compute values in t_stat
+D_bar = mean(Diff)
+S_d = sd(Diff)
+n = length(Diff)
+```
+
+
+$$
+T=\frac{\bar{D}-0}{\frac{S_{d}}{\sqrt{n}}} \overset{H_0}{\sim} T_{n-1}
+$$
+```{r}
+## compute t_stat
+t_stat = D_bar/(S_d/sqrt(n))
+
+alpha = 0.05
+```
+
+
+##### method 1: reject region
+```{r}
+## compute quantile:
+t_upper = qt(0.95, df = n - 1)
+
+## the code below check whether observed t_stat falls in the reject region:
+t_stat > t_upper 
+```
+
+##### method 2: p-value
+$$
+pv =  P(T > t_{stat})
+$$
+
+
+```{r}
+## compute p-value
+pt(t_stat, df = n - 1, lower.tail = FALSE)
+```
+
+
+##### method3: off-the-shelf function t.test()
+```{r}
+t.test(After, Before, paired=TRUE, alternative="greater") 
+```
+
+
+
+#### B. Perform the relevant bootstrap test to test the claim.
+
+```{r}
+#Bootrap Function 
+bootstrap = function(x, n.boot) {
+  n = length(x)
+  x.bar <- mean(x)
+  t.hat <- numeric(n.boot) # create vector of length n.boot zeros
+  for(i in 1:n.boot) {
+    x.star <- sample(x, size=n, replace=TRUE)
+    x.bar.star <- mean(x.star)
+    s.star <- sd(x.star)
+    t.hat[i] <- (x.bar.star - x.bar) / (s.star / sqrt(n))
+}
+  return(t.hat)
+}
+
+set.seed(1)
+B=10000
+Boot.t.diff = bootstrap(Diff, B)
+hist(Boot.t.diff)
+```
+
+##### method 1: reject region
+```{r}
+## compute quantile: 
+boo.t.upper = quantile(Boot.t.diff,probs = .95)
+
+## the code below check whether observed t_stat falls in the reject region:
+t_stat > boo.t.upper 
+```
+
+##### method 2: p-value
+$$
+pv =  P(T > t_{stat})
+$$
+
+
+```{r}
+## compute p-value:
+sum(Boot.t.diff >= t_stat)/10000
+```
+
+
+
+
+
+
+
+
+
+
+
+
