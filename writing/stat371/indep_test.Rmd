@@ -1,0 +1,59 @@
+---
+title: "discussion15"
+output: html_document
+
+---
+
+## Example 1 Goodness-of-fit test
+```{r}
+1-pchisq(37.5,df = 1)
+
+chisq.test(x = c(30,70), p = c(0.6,0.4))
+
+```
+
+
+
+
+
+## Q1 (pre-Final Quiz)
+
+```{r}
+
+# put this into matrix 2 by 3 as given in the question
+# note that element is put by column 
+data= matrix(c(302, 871, 80, 444, 43, 873), nrow=2)
+
+colnames(data) = c("Demo","Indep","Repub")
+rownames(data) = c("Cali", "non-Cali")
+
+t# tab = as.table(data)
+# chisq test for indepence btw row factor and column factor
+chisq.test(data) 
+
+  #Or you can do manual calculation for this test
+
+rowTotals = rowSums(data)
+rowTotals
+colTotals = colSums(data)
+colTotals
+n=sum(colTotals)
+
+exp_table = rowTotals %*% t(colTotals)/n 
+X_square = sum((data-exp_table)^2/exp_table)
+X_square 
+# df should be (no. of rows-1)*(no. of cols -1) =2
+p_value = pchisq(X_square, df=2, lower.tail=FALSE )
+p_value
+
+#compare the result from manual calcuation to ouput from chisq.test()
+result=chisq.test(data)
+result # same value of test statistic as X_square above
+result$p.value # same p value as p_value above
+result$statistic
+
+
+```
+
+
+
